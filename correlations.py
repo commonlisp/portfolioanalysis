@@ -43,23 +43,32 @@ def priceReturn(current, original):
 
 def returnSeries(config, sym):
   pd = yfpricedata(config, sym)
-  sym0prices = map(lambda row: row.adj, pd)
+  pd.reverse()
+  sym0prices = array(map(lambda row: row.adj, pd))
   sym0dates = map(lambda row: row.date, pd)
+  #print 'prices: ' + str(sym0prices)
   #print "Starting price: " + str(sym0prices[-1]) + " for day " + str(sym0dates[-1]) + " last price: " + str(sym0prices[0]) + " diff: " + str((sym0prices[0]-sym0prices[-1])/sym0prices[-1])
-  sym0returns = map(lambda x: priceReturn(x,sym0prices[-1]), sym0prices)
-  return sym0returns
+  sym0returns = (sym0prices - sym0prices[0])/sym0prices[0]
+  return zip(sym0dates, sym0returns)
 
 def portfolioIndex(syms, config=timeframe):
   portfolioData = array(map(lambda x: returnSeries(config, x), syms)).transpose()
   mktwgts = portfolioMktWeightings(syms)
   print 'mktwgts: ' + str(mktwgts)
-  return dot(portfolioData, mktwgts)[ : : -1]
+  dates, returns = portfolioData
+  res = dot(returns, mktwgts)
+  #print 'res : ' + str(res)
+  return zip(map(lambda x:x[0], dates), res)
 
-def plotTS(series):
+def plotTSBar(series):
   nseries = series + 1
   plt.bar(arange(len(series)), nseries, width=1)
   plt.ylim(ymin=min(nseries))
 
+def plotTS(series):
+  dates, nseries = zip(*series)
+  plt.plot_date(dates, array(nseries)+1, fmt='-')
+  
 def monthsFromBusinessDate(d, months):
   monthago = d + relativedelta(months=-months)
   delta = timedelta((monthago.weekday() + 1) % 5)
