@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# correlations.py
+# Calculates returns from historical price data
+# correlations, and market-weighted portfolio returns
+# Author: George Kuan
+
 from urllib2 import urlopen
 from datetime import datetime, date, timedelta
 from numpy import *
@@ -59,11 +64,6 @@ def portfolioIndex(syms, config=timeframe):
   res = dot(returns, mktwgts)
   #print 'res : ' + str(res)
   return zip(map(lambda x:x[0], dates), res)
-
-def plotTSBar(series):
-  nseries = series + 1
-  plt.bar(arange(len(series)), nseries, width=1)
-  plt.ylim(ymin=min(nseries))
 
 def plotTS(series):
   dates, nseries = zip(*series)

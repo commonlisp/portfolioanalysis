@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# historicalpricedata.py
+# Marshal historical price data from Yahoo Finance source
+# to a Python object format
+# Author: George Kuan
+
 import csv
 import math
 import multiprocessing
